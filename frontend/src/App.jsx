@@ -1,54 +1,22 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
+const socket = io.connect("http://localhost:3000");
 function App() {
-  const socket = io("http://localhost:3000");
-  const [receivingData, setReceivingData] = useState([]);
-  const [sendingData, setSendingData] = useState("");
-
-  const connectSocket = () => {
-    console.log("object");
-    socket.on("message", (data) => {
-      console.log("object");
-      setReceivingData(data);
-    });
-    socket.on("connection", (socket) => {
-      console.log(socket);
-    });
+  const send_message = () => {
+    socket.emit("received_message", { message: "hello world!!!" });
   };
-  console.log("hello");
-  socket.on("message", (data) => {
-    setReceivingData(data);
-  });
-
-  const sendMessage = () => {
-    console.log(sendingData);
-    socket.emit("message", sendingData);
-    setSendingData("");
-  };
-
   useEffect(() => {
-    connectSocket();
-  }, [receivingData]);
-
+    socket.on("sending_message", (data) => {
+      alert(data.message);
+      console.log(data.message);
+    });
+  }, [socket]);
   return (
-    <div
-      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-    >
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <input
-          type="text"
-          value={sendingData}
-          onChange={(e) => setSendingData(e.target.value)}
-        />
-        <button onClick={sendMessage}>send</button>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        {receivingData.map((data, index) => {
-          return <h3 key={index}>{data}</h3>;
-        })}
-      </div>
-    </div>
+    <>
+      <h1>hello</h1>
+      <button onClick={send_message}>send</button>
+    </>
   );
 }
 
