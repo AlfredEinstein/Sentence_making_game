@@ -1,16 +1,22 @@
 const express = require("express");
 const app = express();
+const loginAndRegistration = require("./routes/loginAndRegistration");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const connectToMongo = require("./config/mongoDbConfig");
+require("dotenv").config();
 
 app.use(cors());
-
+app.use(express.json());
+connectToMongo();
 const server = http.createServer(app);
+
+app.use("/api/loginregister", loginAndRegistration);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
   },
 });
@@ -23,6 +29,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log("Server Started....");
+server.listen(process.env.PORT, () => {
+  console.log(`Server Started on ${process.env.PORT}....`);
 });
