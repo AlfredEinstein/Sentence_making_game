@@ -1,23 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import io from "socket.io-client";
-const socket = io.connect("http://localhost:3000");
+import Login from "./pages/Login";
+
 function App() {
-  const send_message = () => {
-    socket.emit("received_message", { message: "hello world!!!" });
-  };
-  useEffect(() => {
-    socket.on("sending_message", (data) => {
-      alert(data.message);
-      console.log(data.message);
-    });
-  }, [socket]);
-  return (
-    <>
-      <h1>hello</h1>
-      <button onClick={send_message}>send</button>
-    </>
-  );
+  return <Login />;
 }
 
 export default App;
