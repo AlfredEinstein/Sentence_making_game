@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import io from "socket.io-client";
-const socket = io.connect("http://localhost:3000");
+
 
 function MessageWindow() {
   const send_message = () => {
+    const socket = io.connect("http://localhost:3000");
     socket.emit("received_message", { message: "hello world!!!" });
   };
   useEffect(() => {
+    const socket = io.connect("http://localhost:3000");
     socket.on("sending_message", (data) => {
       alert(data.message);
       console.log(data.message);
     });
-  }, [socket]);
+    return()=>{
+      socket.disconnect();
+    }
+  }, []);
   return (
     <>
       <h1>hello</h1>
