@@ -1,8 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
+import axios from 'axios';
+import axiosInstance from "../Config/axiosInstance";
+import apiServices from "../../apiServices";
 
-function Register(props) {
-
+function Register({onSuccess, onFailure}) {
+  const [userData,setUserData]=useState({
+    userName:"",
+    userPassword:""
+  });
+  const [confirmPassword,setConfirmPassword]=useState();
+  
+  const handleChange=(e)=>{
+    const {name,value}=e.target;
+    setUserData((prevdata)=>({
+      ...prevdata,
+      [name]:value,
+    }));
+  }
+  const onSubmit=()=>{
+    console.log("onsubmit checkpoint1");
+    if(userData.userName && userData.userPassword){
+      console.log("onsubmit checkpoint2");
+      const sendUserData=async()=>{
+        try{
+          console.log("onsubmit checkpoint3");
+          console.log(userData);
+          const userReg=await apiServices.registerUser(userData);
+          console.log("onsubmit checkpoint4");
+          onSuccess(userReg.data.message);
+        }catch(err){
+          console.log(err.response.data.message);
+          onFailure(err.response.data.message);
+        }
+      }
+      sendUserData();
+    }
+    else{
+      return <div className="alert alert-danger">Fill all the fields</div>
+    }
+    
+  }
   return <div className="modal-dialog modal-lg">
    <div >
       <div className="modal-content">
@@ -13,25 +51,28 @@ function Register(props) {
         <div className="container modal-body">
           <form>
             <div className="mb-1 p-3">
-              <label htmlFor="userEmail" className="form-label"> Email Address </label>
-              <input type="email" className="form-control" id="userEmail" aria-describedby="mailHelp"/>
+              <label htmlFor="userName" className="form-label"> UserName </label>
+              <input type="name" className="form-control" id="userName" value={userData.userName} name="userName" onChange={handleChange} aria-describedby="mailHelp"/>
               <div id="mailHelp" className="form-text">We will keep your details safe</div>
             </div>
             <div className="mb-1 p-3">
-              <label htmlFor="userPassword" className="form-label"> Password </label>
-              <input type="password" className="form-control" id="userPassword" aria-describedby="passwordHelp"/>
+              <label htmlFor="newUserPassword" className="form-label"> Password </label>
+              <input type="password" className="form-control" id="newUserPassword" aria-describedby="passwordHelp" name="userPassword" value={userData.userPassword} onChange={handleChange}/>
               <div id="passwordHelpBlock" class="form-text">
                 Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
               </div>
             </div>
             <div className="mb-1 p-3">
               <label htmlFor="Re-Password" className="form-label"> Confirm Password </label>
-              <input type="password" className="form-control" id="Re-Password" aria-describedby="passwordHelp"/>
+              <input type="password" className="form-control" id="Re-Password" aria-describedby="passwordHelp" name="confirmPassword" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)}/>
             </div>
+            <div id="passwordHelp" className="form-text">
+              <p className={`${userData.userPassword == confirmPassword ? 'visually-hidden':''}`}> password is not same </p>
+              Please re-enter your password for confirmation.</div>
           </form>
         </div>
         <div className="modal-footer">
-          <button type="Submit">Submit</button>
+          <button type="Submit" className="btn btn-primary" onClick={onSubmit} data-bs-dismiss="modal" disabled={!userData.userName || !userData.userPassword || userData.userPassword !== confirmPassword}>Submit</button>
         </div>
       </div>
     </div>
