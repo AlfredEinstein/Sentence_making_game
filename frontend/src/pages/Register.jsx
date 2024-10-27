@@ -19,15 +19,10 @@ function Register({onSuccess, onFailure}) {
     }));
   }
   const onSubmit=()=>{
-    console.log("onsubmit checkpoint1");
     if(userData.userName && userData.userPassword){
-      console.log("onsubmit checkpoint2");
       const sendUserData=async()=>{
         try{
-          console.log("onsubmit checkpoint3");
-          console.log(userData);
           const userReg=await apiServices.registerUser(userData);
-          console.log("onsubmit checkpoint4");
           onSuccess(userReg.data.message);
         }catch(err){
           console.log(err.response.data.message);

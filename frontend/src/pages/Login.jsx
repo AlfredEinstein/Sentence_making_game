@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./Login.scss";
+import apiServices from "../../apiServices";
 function Login(props) {
+  const [userData,setUserData]=useState({
+    userName:'',
+    userPassword:'',
+  });
+  const handleChange=(e)=>{
+    const {name,value}=e.target;
+    setUserData((prevdata)=>({
+      ...prevdata,
+      [name]:value,
+    }))
+  };
+  const handleSubmit = () => {
+    const userLogin = async () => {
+      try {
+        console.log(userData);
+        const login = await apiServices.userLogin(userData);
+        props.onSuccess(login.data.message);
+      } catch (error) {
+        props.onFailure(error.response?.data?.message || "An error occurred.");
+      }
+    };
+    
+    userLogin(); // Ensure this is called immediately
+  };
   return (
     <div className="modal-dialog modal-lg modal-centered">
    <div >
@@ -13,18 +38,18 @@ function Login(props) {
         <div className="modal-body">
           <form>
             <div className="mb-1 p-3">
-              <label htmlFor="userEmail" className="form-label"> Email Address </label>
-              <input type="email" className="form-control" id="userEmail" aria-describedby="mailHelp"/>
-              <div id="mailHelp" className="form-text">Please Enter Your Registered Email</div>
+              <label htmlFor="Name" className="form-label"> Email Address </label>
+              <input type="name" className="form-control" id="Name" aria-describedby="mailHelp" value={userData.userName} name="userName" onChange={handleChange}/>
+              <div id="mailHelp" className="form-text">Please Enter Your Registered User Name</div>
             </div>
             <div className="mb-1 p-3">
               <label htmlFor="userPassword" className="form-label"> Password </label>
-              <input type="password" className="form-control" id="userPassword" aria-describedby="passwordHelp"/>
+              <input type="password" className="form-control" id="userPassword" aria-describedby="passwordHelp" value={userData.userPassword} name="userPassword" onChange={handleChange}/>
             </div>
           </form>
         </div>
         <div className="modal-footer">
-          <button type="Submit">Submit</button>
+          <button className="btn btn-primary" type="Submit" data-bs-dismiss="modal" disabled={!userData.userName || !userData.userPassword} onClick={handleSubmit}>Submit</button>
         </div>
       </div>
     </div>
@@ -32,6 +57,9 @@ function Login(props) {
   );
 }
 
-Login.propTypes = {};
+Login.propTypes = {
+  onSuccess: PropTypes.func.isRequired,
+  onFailure: PropTypes.func.isRequired,
+};
 
 export default Login;

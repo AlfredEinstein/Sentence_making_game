@@ -35,7 +35,7 @@ function App() {
         Login
         </button>
         <div className="modal fade" id="login" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-          <Login/>   
+          <Login onSuccess={handleSuccess} onFailure={handleFailure}/>   
         </div>
         </div>
         <div className="col">
