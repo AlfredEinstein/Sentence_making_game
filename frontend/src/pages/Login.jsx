@@ -22,6 +22,7 @@ function Login(props) {
         console.log(userData);
         const login = await apiServices.userLogin(userData);
         localStorage.setItem("token", login.data.jwtToken);
+        localStorage.setItem('userName', login.data.userName);
         props.onSuccess(login.data.message);
         navigate("/Dashboard");
       } catch (error) {
