@@ -57,11 +57,17 @@ exports.login = async (req, res) => {
     const user = await userData.findOne({ userName: name });
     if (user && (await bcrypt.compare(userPassword, user.userPassword))) {
       const token = jwt.sign({ id: user.id }, secret);
-      return res.status(200).json({ message: "Login successful", jwtToken: token });
+      return res
+        .status(200)
+        .json({ message: "Login successful", jwtToken: token });
     } else {
-      return res.status(400).json({ message: "Incorrect username or password" });
+      return res
+        .status(400)
+        .json({ message: "Incorrect username or password" });
     }
   } else {
-    return res.status(401).json({ message: "Username and password are required" });
+    return res
+      .status(401)
+      .json({ message: "Username and password are required" });
   }
 };
